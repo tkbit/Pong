@@ -81,7 +81,7 @@ void gameLogic() {
         && ballDirX < 0
         ) {
         ballDirX = ballDirX * -1;
-        ballDirY = (int)(std::sin(std::rand()) * ballSpeed * 2);
+        ballDirY = (int)(std::sin(std::rand()) * 6);
         std::cout << ballDirY << '\n';
     }
 
