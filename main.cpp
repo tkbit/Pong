@@ -27,13 +27,13 @@ void gameInit() {
     //left paddle
 
     paddle1.y = 2;
-    paddle1.w = 3;
+    paddle1.w = 1;
     paddle1.h = 20;
     paddle1.x = paddle1.w;
 
     //right paddle
     paddle2.y = 0;
-    paddle2.w = 3;
+    paddle2.w = 1;
     paddle2.h = 20;
     paddle2.x = gameArrayX - 2 * paddle2.w;
 
