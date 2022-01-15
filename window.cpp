@@ -22,8 +22,6 @@ pos mouse;
 
 void initSDL() {
 
-    float dpiH, dpiV, dpiD;
-
     //initilize needed SDL functions
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
         SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
@@ -32,6 +30,9 @@ void initSDL() {
     }
 
     /*
+    * 
+    * float dpiH, dpiV, dpiD;
+    * 
     if (SDL_GetDisplayDPI(0, &dpiD, &dpiH, &dpiV) != 0) {
         SDL_Log("Unable to get display dpi: %s", SDL_GetError());
     }
