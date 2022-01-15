@@ -4,11 +4,12 @@
 #include "window.h"
 
 int statusCode = 0; //0 = good, 1 = sdl_init faild
-int windowSizeIn = 5, pixelSizeX = 4, pixelSizeY = 4;
+int windowSizeIn = 8, pixelSizeX = 3, pixelSizeY = 3;
 float targetFPS = 30;
-int windowWidth = gameArrayX * pixelSizeX, windowHeight = gameArrayY * pixelSizeY;
 
-const int gameArrayX = 100, gameArrayY = 100;
+const int gameArrayX = 256, gameArrayY = 240;
+
+int windowWidth = gameArrayX * pixelSizeX, windowHeight = gameArrayY * pixelSizeY;
 
 SDL_Window* windowMain;
 Uint32 windowMainID = NULL;
@@ -30,6 +31,7 @@ void initSDL() {
         programRunning = false;
     }
 
+    /*
     if (SDL_GetDisplayDPI(0, &dpiD, &dpiH, &dpiV) != 0) {
         SDL_Log("Unable to get display dpi: %s", SDL_GetError());
     }
@@ -40,6 +42,8 @@ void initSDL() {
         windowHeight = gameArrayY * pixelSizeY;
         SDL_Log("Display DPI: %f", dpiD);
     }
+
+    */
 
     windowMain = SDL_CreateWindow(
         "Pong v0.2",                       // window title
