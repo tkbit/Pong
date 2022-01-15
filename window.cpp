@@ -17,7 +17,8 @@ SDL_Renderer* rendererMain;
 SDL_Rect pixelRectArray[gameArrayX * gameArrayY];
 
 pos mouse;
-
+Uint32 mouseButtons;
+const Uint8* keyboardState;
 
 
 void initSDL() {
@@ -75,7 +76,9 @@ void initSDL() {
 
 void checkInputs() {
 
-    SDL_GetMouseState(&mouse.x, &mouse.y);
+    mouseButtons = SDL_GetMouseState(&mouse.x, &mouse.y);
+
+    keyboardState = SDL_GetKeyboardState(NULL);
 
     SDL_Event event;
     while (SDL_PollEvent(&event)) {

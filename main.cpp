@@ -8,6 +8,7 @@
 const int version = 20220115; // yyyymmdd time format
 
 bool programRunning = true; //false if trying to exit
+int currentMenu = 1;// 0 = no menu so go into game 1 = main menu
 
 int ballDirX = 1, ballDirY = 0;
 int ballSpeed = 4;
@@ -67,6 +68,11 @@ void gameReset() {
 // Game code
 void gameLogic() {
 
+    if (keyboardState[SDL_SCANCODE_ESCAPE]) {
+        currentMenu = 1;
+        gameReset();
+    }
+
     updatePaddles();
 
     // if ball hits a paddle then bounce
@@ -111,6 +117,50 @@ void gameLogic() {
 
 }
 
+void mainMenuTick() {
+
+    SDL_Rect startButton;
+
+    startButton.w = windowWidth / 4;
+    startButton.h = windowHeight / 8;
+    startButton.x = (windowWidth / 2) - startButton.w / 2;
+    startButton.y = windowHeight / 2;
+
+    SDL_SetRenderDrawColor(rendererMain, 21, 21, 23, NULL);
+    SDL_RenderClear(rendererMain);
+
+    if (mouse.x >= startButton.x
+        && mouse.x <= startButton.x + startButton.w
+        && mouse.y >= startButton.y
+        && mouse.y < startButton.y + startButton.h
+        ) {
+
+        SDL_SetRenderDrawColor(rendererMain, 89, 89, 94, NULL);
+        
+        if (mouseButtons & SDL_BUTTON_LEFT) {
+            currentMenu = 0;
+        }
+        
+    }
+    else {
+        SDL_SetRenderDrawColor(rendererMain, 49, 49, 44, NULL);
+    }
+
+    
+    SDL_RenderFillRect(rendererMain, &startButton);
+
+    SDL_RenderPresent(rendererMain);
+
+}
+
+void gameTick() {
+
+    gameLogic();
+
+    gameDraw();
+
+}
+
 // main function game start
 
 int main(int argc, char* argv[]) {
@@ -124,9 +174,7 @@ int main(int argc, char* argv[]) {
 
         checkInputs();
 
-        gameLogic();
-
-        gameDraw();
+        if (currentMenu == 1) mainMenuTick(); else gameTick();
 
         SDL_Delay(targetFPSDelay);
 
