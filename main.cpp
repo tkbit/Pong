@@ -8,16 +8,30 @@
 bool programRunning = true; //false if trying to exit
 
 int ballDirX = -1, ballDirY = 1;
+int ballSpeed = 4;
 
 SDL_Rect pixelRect, paddle1, paddle2, ball;
 
-int PL1 = 0, PL2 = 0;
+int player1Score = 0, player2Score = 0;
 
-// sets up sdl
 
-// Sets up Varibles 
 
-void gameInit() {
+void updatePaddles() {
+
+    //move paddles y to the mouse cursor
+    paddle1.y = mouse.y / pixelSizeY - paddle1.h / 2;
+    paddle2.y = mouse.y / pixelSizeY - paddle2.h / 2;
+
+    //keep paddles within the window
+    if (paddle1.y > gameArrayY - paddle1.h) paddle1.y = gameArrayY - paddle1.h;
+    else if (paddle1.y < 0) paddle1.y = 0;
+
+    if (paddle2.y > gameArrayY - paddle2.h) paddle2.y = gameArrayY - paddle2.h;
+    else if (paddle2.y < 0) paddle2.y = 0;
+
+}
+
+void gameReset() {
 
     pixelRect.x = 0;
     pixelRect.y = 0;
@@ -43,24 +57,17 @@ void gameInit() {
     ball.w = 2;
     ball.h = 2;
 
+    updatePaddles();
+
 }
 
-// CODE
-
+// Game code
 void gameLogic() {
 
-    paddle1.y = mouse.y / pixelSizeY - paddle1.h / 2;
-    paddle2.y = mouse.y / pixelSizeY - paddle2.h / 2;
+    updatePaddles();
 
-    if (paddle1.y > gameArrayY - paddle1.h) paddle1.y = gameArrayY - paddle1.h;
-    else if (paddle1.y < 0) paddle1.y = 0;
-
-    if (paddle2.y > gameArrayY - paddle2.h) paddle2.y = gameArrayY - paddle2.h;
-    else if (paddle2.y < 0) paddle2.y = 0;
-
-    // ball hit PDL1 and PDL2 bounce
+    // if ball hits a paddle then bounce
     if (
-        //ball.x + ball.w > paddle2.x
         ball.x + ball.w >= paddle2.x
         && ball.y  < paddle2.y + paddle2.h
         && ball.y  > paddle2.y
@@ -76,7 +83,7 @@ void gameLogic() {
         ballDirY = (std::rand() % 4) - 2;
     }
 
-    // hit top oe bottom bounce
+    // if ball hits top or bottom of screen then bounce
     if (
         ball.y > gameArrayY - ball.h
         && ballDirY > 0
@@ -85,24 +92,20 @@ void gameLogic() {
         ) ballDirY = ballDirY * -1;
 
 
-    ball.x = ball.x + ballDirX;
-    ball.y = ball.y + ballDirY;
+    // move ball
+    ball.x = ball.x + ballDirX * ballSpeed;
+    ball.y = ball.y + ballDirY * ballSpeed;
 
 
-    // reset 
+    // reset if ball hits left or right edge of screen
     if (ball.x < 0) {
-        gameInit();
-        paddle1.y = mouse.y / pixelSizeY - paddle1.h / 2;
-        paddle2.y = mouse.y / pixelSizeY - paddle2.h / 2;
-        PL2++;
-        std::cout << PL1 << PL2;
-    }
-    if (ball.x > gameArrayX) {
-        gameInit();
-        paddle1.y = mouse.y / pixelSizeY - paddle1.h / 2;
-        paddle2.y = mouse.y / pixelSizeY - paddle2.h / 2;
-        PL1++;
-        std::cout << PL1 << PL2;
+        gameReset();
+        player2Score++;
+        std::cout << player1Score << player2Score;
+    }else if (ball.x > gameArrayX) {
+        gameReset();
+        player1Score++;
+        std::cout << player1Score << player2Score;
 
     }
 
@@ -115,18 +118,17 @@ int main(int argc, char* argv[]) {
     int targetFPSDelay = (int)((1 / targetFPS) * 1000);
 
     initSDL();
-    gameInit();
+    gameReset();
 
     while (programRunning) {
+
+        checkInputs();
 
         gameLogic();
 
         gameDraw();
 
         SDL_Delay(targetFPSDelay);
-
-        checkInputs();
-
 
     }
 
