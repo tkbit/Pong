@@ -40,8 +40,8 @@ void gameInit() {
     //ball
     ball.x = gameArrayX / 2;
     ball.y = gameArrayY / 2;
-    ball.w = 4;
-    ball.h = 4;
+    ball.w = 2;
+    ball.h = 2;
 
 }
 
