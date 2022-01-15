@@ -81,7 +81,7 @@ void gameLogic() {
         && ballDirX < 0
         ) {
         ballDirX = ballDirX * -1;
-        ballDirY = (int)(std::sin(std::rand()) * 6);
+        ballDirY = (int)(std::sin(mouse.y) * 6);
     }
 
     // if ball hits top or bottom of screen then bounce
