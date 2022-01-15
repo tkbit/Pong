@@ -1,7 +1,7 @@
 #include<iostream>
 #include <SDL.h>
 #include "main.h"
-#include "Window.h"
+#include "window.h"
 
 int statusCode = 0; //0 = good, 1 = sdl_init faild
 int windowSizeIn = 5, pixelSizeX = 4, pixelSizeY = 4;
