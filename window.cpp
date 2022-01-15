@@ -5,7 +5,7 @@
 
 int statusCode = 0; //0 = good, 1 = sdl_init faild
 int windowSizeIn = 8, pixelSizeX = 3, pixelSizeY = 3;
-float targetFPS = 30;
+float targetFPS = 60;
 
 const int gameArrayX = 256, gameArrayY = 240;
 

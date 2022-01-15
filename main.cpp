@@ -8,7 +8,7 @@
 bool programRunning = true; //false if trying to exit
 
 int ballDirX = 1, ballDirY = 0;
-int ballSpeed = 8;
+int ballSpeed = 4;
 
 SDL_Rect pixelRect, paddle1, paddle2, ball;
 
@@ -81,7 +81,7 @@ void gameLogic() {
         && ballDirX < 0
         ) {
         ballDirX = ballDirX * -1;
-        ballDirY = (int)(std::sin(std::rand()) * ballSpeed);
+        ballDirY = (int)(std::sin(std::rand()) * ballSpeed * 2);
         std::cout << ballDirY << '\n';
     }
 
