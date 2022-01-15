@@ -7,8 +7,8 @@
 
 bool programRunning = true; //false if trying to exit
 
-int ballDirX = -1, ballDirY = 1;
-int ballSpeed = 4;
+int ballDirX = 1, ballDirY = 0;
+int ballSpeed = 8;
 
 SDL_Rect pixelRect, paddle1, paddle2, ball;
 
@@ -20,7 +20,8 @@ void updatePaddles() {
 
     //move paddles y to the mouse cursor
     paddle1.y = mouse.y / pixelSizeY - paddle1.h / 2;
-    paddle2.y = mouse.y / pixelSizeY - paddle2.h / 2;
+    //paddle2.y = mouse.y / pixelSizeY - paddle2.h / 2;
+    paddle2.y = ball.y + ball.h / 2 - paddle2.h / 2;
 
     //keep paddles within the window
     if (paddle1.y > gameArrayY - paddle1.h) paddle1.y = gameArrayY - paddle1.h;
@@ -33,29 +34,29 @@ void updatePaddles() {
 
 void gameReset() {
 
+    //game pixels
     pixelRect.x = 0;
     pixelRect.y = 0;
     pixelRect.w = pixelSizeX;
     pixelRect.h = pixelSizeY;
 
     //left paddle
-
-    paddle1.y = 2;
-    paddle1.w = 5;
-    paddle1.h = 20;
+    paddle1.y = 0;
+    paddle1.w = 8;
+    paddle1.h = 64;
     paddle1.x = paddle1.w;
 
     //right paddle
     paddle2.y = 0;
-    paddle2.w = 5;
-    paddle2.h = 20;
+    paddle2.w = 8;
+    paddle2.h = 64;
     paddle2.x = gameArrayX - 2 * paddle2.w;
 
     //ball
     ball.x = gameArrayX / 2;
     ball.y = gameArrayY / 2;
-    ball.w = 2;
-    ball.h = 2;
+    ball.w = 8;
+    ball.h = 8;
 
     updatePaddles();
 
@@ -80,7 +81,8 @@ void gameLogic() {
         && ballDirX < 0
         ) {
         ballDirX = ballDirX * -1;
-        ballDirY = (std::rand() % 4) - 2;
+        ballDirY = (int)(std::sin(std::rand()) * ballSpeed);
+        std::cout << ballDirY << '\n';
     }
 
     // if ball hits top or bottom of screen then bounce
@@ -94,7 +96,7 @@ void gameLogic() {
 
     // move ball
     ball.x = ball.x + ballDirX * ballSpeed;
-    ball.y = ball.y + ballDirY * ballSpeed;
+    ball.y = ball.y + ballDirY;
 
 
     // reset if ball hits left or right edge of screen
