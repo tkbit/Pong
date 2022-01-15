@@ -82,7 +82,6 @@ void gameLogic() {
         ) {
         ballDirX = ballDirX * -1;
         ballDirY = (int)(std::sin(std::rand()) * 6);
-        std::cout << ballDirY << '\n';
     }
 
     // if ball hits top or bottom of screen then bounce
@@ -103,12 +102,9 @@ void gameLogic() {
     if (ball.x < 0) {
         gameReset();
         player2Score++;
-        std::cout << player1Score << player2Score;
     }else if (ball.x > gameArrayX) {
         gameReset();
         player1Score++;
-        std::cout << player1Score << player2Score;
-
     }
 
 }
