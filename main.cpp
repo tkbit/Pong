@@ -5,6 +5,8 @@
 
 // Global varibles 
 
+const int version = 20220115; // yyyymmdd time format
+
 bool programRunning = true; //false if trying to exit
 
 int ballDirX = 1, ballDirY = 0;
