@@ -5,12 +5,12 @@
 
 // Global varibles 
 
-enum Screen { Game = 0, MainMenu, SettingsMenu };
+
 
 SDL_Surface* spriteSheetSurface;
 SDL_Texture* spriteSheetTexture;
 
-const int version = 2022011521; // yyyymmddhh 24 hour time format
+const int version = 2022011602; // yyyymmddhh 24 hour time format
 
 bool programRunning = true; //false if trying to exit
 int currentMenu = Screen::MainMenu;
@@ -37,6 +37,11 @@ void updatePaddles() {
     if (paddle2.y > gameArrayY - paddle2.h) paddle2.y = gameArrayY - paddle2.h;
     else if (paddle2.y < 0) paddle2.y = 0;
 
+}
+
+void scoreReset() {
+    player1Score = 0;
+    player2Score = 0;
 }
 
 void gameReset() {
@@ -83,11 +88,6 @@ void gameReset() {
 // Game code
 void gameLogic() {
 
-    if (keyboardState[SDL_SCANCODE_ESCAPE]) {
-        currentMenu = Screen::MainMenu;
-        gameReset();
-    }
-
     updatePaddles();
 
     // if ball hits a paddle then bounce
@@ -128,18 +128,47 @@ void gameLogic() {
     }else if (ball.x > gameArrayX) {
         gameReset();
         player1Score++;
+        std::cout << player1Score << '\n';
+    }
+
+}
+
+void textToScreen(std::string text, int textX, int textY, int size, int spacing) {
+
+    sprite.x = textX;
+    sprite.y = textY;
+    sprite.w = size * pixelSizeX;
+    sprite.h = size * pixelSizeY;
+
+    for (int i = 0; i <= text.length(); i++) {
+
+        spriteSheetSprite.x = 8 * (text[i] - 32);
+        spriteSheetSprite.y = 0;
+
+        while (spriteSheetSprite.x > 256) {
+            spriteSheetSprite.x = spriteSheetSprite.x - 256;
+            spriteSheetSprite.y = spriteSheetSprite.y + 8;
+        }
+
+        SDL_RenderCopy(rendererMain, spriteSheetTexture, &spriteSheetSprite, &sprite);
+        sprite.x = sprite.x + sprite.w + spacing * pixelSizeX;
     }
 
 }
 
 void mainMenuTick() {
 
-    SDL_Rect startButton;
+    SDL_Rect startButton, settingsButton;
 
-    startButton.w = 140;
-    startButton.h = 34;
+    startButton.w = 130;
+    startButton.h = 40;
     startButton.x = (windowWidth / 2) - startButton.w / 2;
     startButton.y = windowHeight / 2;
+
+    settingsButton.w = 178;
+    settingsButton.h = 34;
+    settingsButton.x = startButton.x;
+    settingsButton.y = startButton.y + startButton.h * 2;
 
     SDL_SetRenderDrawColor(rendererMain, 21, 21, 23, NULL);
     SDL_RenderClear(rendererMain);
@@ -161,29 +190,34 @@ void mainMenuTick() {
         SDL_SetRenderDrawColor(rendererMain, 49, 49, 44, NULL);
     }
 
-    
     SDL_RenderFillRect(rendererMain, &startButton);
 
-    // swith to sprite A
-    spriteSheetSprite.y = 8;
-    
-    sprite.x = startButton.x + 10;
-    sprite.y = startButton.y + 5;
+    /*
+    if (mouse.x >= settingsButton.x
+        && mouse.x <= settingsButton.x + settingsButton.w
+        && mouse.y >= settingsButton.y
+        && mouse.y < settingsButton.y + settingsButton.h
+        ) {
 
-    spriteSheetSprite.x = 8 * (83 - 64);
-    SDL_RenderCopy(rendererMain, spriteSheetTexture, &spriteSheetSprite, &sprite);
-    spriteSheetSprite.x = 8 * (84 - 64);
-    sprite.x = sprite.x + spriteSheetSprite.w * pixelSizeX;
-    SDL_RenderCopy(rendererMain, spriteSheetTexture, &spriteSheetSprite, &sprite);
-    spriteSheetSprite.x = 8;
-    sprite.x = sprite.x + spriteSheetSprite.w * pixelSizeX;
-    SDL_RenderCopy(rendererMain, spriteSheetTexture, &spriteSheetSprite, &sprite);
-    spriteSheetSprite.x = 8 * (82 - 64);
-    sprite.x = sprite.x + spriteSheetSprite.w * pixelSizeX;
-    SDL_RenderCopy(rendererMain, spriteSheetTexture, &spriteSheetSprite, &sprite);
-    spriteSheetSprite.x = 8 * (84 - 64);
-    sprite.x = sprite.x + spriteSheetSprite.w * pixelSizeX;
-    SDL_RenderCopy(rendererMain, spriteSheetTexture, &spriteSheetSprite, &sprite);
+        SDL_SetRenderDrawColor(rendererMain, 89, 89, 94, NULL);
+
+        if (mouseButtons & SDL_BUTTON_LEFT) {
+            currentMenu = Screen::SettingsMenu;
+        }
+
+    }
+    else {
+        SDL_SetRenderDrawColor(rendererMain, 49, 49, 44, NULL);
+    }
+
+    SDL_RenderFillRect(rendererMain, &settingsButton);
+    */
+
+    //textToScreen("THE QUICK BROWN FOX JUMPED OVER THE",0,0);
+    //textToScreen("LAZY DOG", 0, 8 * pixelSizeY);
+    textToScreen("PONG", 200, 200, 32, 0);
+    textToScreen("START", startButton.x + 10, startButton.y + 6);
+    //textToScreen("SETINGS", settingsButton.x + 5, settingsButton.y + 5);
 
     SDL_RenderPresent(rendererMain);
 
@@ -194,6 +228,12 @@ void gameTick() {
     gameLogic();
 
     gameDraw();
+
+}
+
+void settingsMenuTick() {
+
+
 
 }
 
@@ -226,7 +266,21 @@ int main(int argc, char* argv[]) {
 
         checkInputs();
 
-        if (currentMenu == 1) mainMenuTick(); else gameTick();
+        //if (currentMenu == 1) mainMenuTick(); else gameTick();
+
+        switch (currentMenu){
+        case Game:
+            gameTick();
+            break;
+
+        case MainMenu:
+            mainMenuTick();
+            break;
+
+        case SettingsMenu:
+            settingsMenuTick();
+            break;
+        }
 
         SDL_Delay(targetFPSDelay);
 

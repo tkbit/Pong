@@ -1,5 +1,7 @@
 #include<iostream>
-#include <SDL.h>
+#include<SDL.h>
+#include<string>
+
 #include "main.h"
 #include "window.h"
 
@@ -80,6 +82,12 @@ void checkInputs() {
 
     keyboardState = SDL_GetKeyboardState(NULL);
 
+    if (keyboardState[SDL_SCANCODE_ESCAPE]) {
+        currentMenu = Screen::MainMenu;
+        gameReset();
+        scoreReset();
+    }
+
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
         switch (event.type) {
@@ -135,6 +143,10 @@ void gameDraw() {
     SDL_RenderClear(rendererMain);
 
     SDL_SetRenderDrawColor(rendererMain, 89, 89, 94, NULL);
+
+    textToScreen(std::to_string(player1Score), 150, 100, 16);
+    textToScreen(std::to_string(player2Score), 550, 100, 16);
+
     SDL_RenderFillRects(rendererMain, pixelRectArray, pixelRectArrayIndex);
 
     SDL_RenderPresent(rendererMain);
