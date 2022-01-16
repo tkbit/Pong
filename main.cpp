@@ -12,7 +12,7 @@ const int version = 20220115; // yyyymmdd time format
 bool programRunning = true; //false if trying to exit
 int currentMenu = Screen::MainMenu;
 int ballDirX = 1, ballDirY = 0;
-int ballSpeed = 2; //change value to 3
+int ballSpeed = 4;
 
 SDL_Rect pixelRect, paddle1, paddle2, ball;
 
