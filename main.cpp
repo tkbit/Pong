@@ -5,12 +5,19 @@
 
 // Global varibles 
 
-bool programRunning = true; //false if trying to exit
 
+
+SDL_Surface* spriteSheetSurface;
+SDL_Texture* spriteSheetTexture;
+
+const int version = 2022011603; // yyyymmddhh 24 hour time format
+
+bool programRunning = true; //false if trying to exit
+int currentMenu = Screen::MainMenu;
 int ballDirX = 1, ballDirY = 0;
 int ballSpeed = 4;
 
-SDL_Rect pixelRect, paddle1, paddle2, ball;
+SDL_Rect pixelRect, paddle1, paddle2, ball, spriteSheetSprite, sprite;
 
 int player1Score = 0, player2Score = 0;
 
@@ -32,7 +39,23 @@ void updatePaddles() {
 
 }
 
+void scoreReset() {
+    player1Score = 0;
+    player2Score = 0;
+}
+
 void gameReset() {
+
+    // sprite in the sprite sheet
+    sprite.x = 100;
+    sprite.y = 100;
+    sprite.w = 8 * pixelSizeX;
+    sprite.h = 8 * pixelSizeY;
+
+    spriteSheetSprite.x = 0;
+    spriteSheetSprite.y = 0;
+    spriteSheetSprite.w = 8;
+    spriteSheetSprite.h = 8;
 
     //game pixels
     pixelRect.x = 0;
@@ -105,7 +128,112 @@ void gameLogic() {
     }else if (ball.x > gameArrayX) {
         gameReset();
         player1Score++;
+        std::cout << player1Score << '\n';
     }
+
+}
+
+void textToScreen(std::string text, int textX, int textY, int size, int spacing) {
+
+    sprite.x = textX;
+    sprite.y = textY;
+    sprite.w = size * pixelSizeX;
+    sprite.h = size * pixelSizeY;
+
+    for (int i = 0; i <= text.length(); i++) {
+
+        spriteSheetSprite.x = 8 * (text[i] - 32);
+        spriteSheetSprite.y = 0;
+
+        while (spriteSheetSprite.x > 256) {
+            spriteSheetSprite.x = spriteSheetSprite.x - 256;
+            spriteSheetSprite.y = spriteSheetSprite.y + 8;
+        }
+
+        SDL_RenderCopy(rendererMain, spriteSheetTexture, &spriteSheetSprite, &sprite);
+        sprite.x = sprite.x + sprite.w + spacing * pixelSizeX;
+    }
+
+}
+
+void mainMenuTick() {
+
+    SDL_Rect startButton, settingsButton;
+
+    startButton.w = 130;
+    startButton.h = 40;
+    startButton.x = (windowWidth / 2) - startButton.w / 2;
+    startButton.y = windowHeight / 2;
+
+    settingsButton.w = 178;
+    settingsButton.h = 34;
+    settingsButton.x = startButton.x;
+    settingsButton.y = startButton.y + startButton.h * 2;
+
+    SDL_SetRenderDrawColor(rendererMain, 21, 21, 23, NULL);
+    SDL_RenderClear(rendererMain);
+
+    if (mouse.x >= startButton.x
+        && mouse.x <= startButton.x + startButton.w
+        && mouse.y >= startButton.y
+        && mouse.y < startButton.y + startButton.h
+        ) {
+
+        SDL_SetRenderDrawColor(rendererMain, 89, 89, 94, NULL);
+        
+        if (mouseButtons & SDL_BUTTON_LEFT) {
+            currentMenu = Screen::Game;
+        }
+        
+    }
+    else {
+        SDL_SetRenderDrawColor(rendererMain, 49, 49, 44, NULL);
+    }
+
+    SDL_RenderFillRect(rendererMain, &startButton);
+
+    /*
+    if (mouse.x >= settingsButton.x
+        && mouse.x <= settingsButton.x + settingsButton.w
+        && mouse.y >= settingsButton.y
+        && mouse.y < settingsButton.y + settingsButton.h
+        ) {
+
+        SDL_SetRenderDrawColor(rendererMain, 89, 89, 94, NULL);
+
+        if (mouseButtons & SDL_BUTTON_LEFT) {
+            currentMenu = Screen::SettingsMenu;
+        }
+
+    }
+    else {
+        SDL_SetRenderDrawColor(rendererMain, 49, 49, 44, NULL);
+    }
+
+    SDL_RenderFillRect(rendererMain, &settingsButton);
+    */
+
+    //textToScreen("THE QUICK BROWN FOX JUMPED OVER THE",0,0);
+    //textToScreen("LAZY DOG", 0, 8 * pixelSizeY);
+    textToScreen("PONG", 200, 200, 32, 0);
+    textToScreen("START", startButton.x + 10, startButton.y + 6);
+    //textToScreen("SETINGS", settingsButton.x + 5, settingsButton.y + 5);
+
+    SDL_RenderPresent(rendererMain);
+
+}
+
+void gameTick() {
+
+    gameLogic();
+
+    gameDraw();
+
+}
+
+void settingsMenuTick() {
+
+
 
 }
 
@@ -116,15 +244,43 @@ int main(int argc, char* argv[]) {
     int targetFPSDelay = (int)((1 / targetFPS) * 1000);
 
     initSDL();
+
+    spriteSheetSurface = SDL_LoadBMP("assects/spriteSheet.bmp"); // load sprite sheet to ram
+    if (!spriteSheetSurface) {
+        SDL_Log("Faild to load spriteSheet.bmp: %s", SDL_GetError());
+        statusCode = 2;
+    }
+
+    spriteSheetTexture = SDL_CreateTextureFromSurface(rendererMain, spriteSheetSurface); // move sprite sheet from ram to vram
+    if (!spriteSheetTexture) {
+        SDL_Log("Faild to create texture: %s", SDL_GetError());
+        statusCode = 2;
+    }
+
+    SDL_FreeSurface(spriteSheetSurface); // free ram of sprite sheet
+
     gameReset();
 
+    if (statusCode != 0) programRunning = false;
     while (programRunning) {
 
         checkInputs();
 
-        gameLogic();
+        //if (currentMenu == 1) mainMenuTick(); else gameTick();
 
-        gameDraw();
+        switch (currentMenu){
+        case Game:
+            gameTick();
+            break;
+
+        case MainMenu:
+            mainMenuTick();
+            break;
+
+        case SettingsMenu:
+            settingsMenuTick();
+            break;
+        }
 
         SDL_Delay(targetFPSDelay);
 

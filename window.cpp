@@ -1,5 +1,7 @@
 #include<iostream>
-#include <SDL.h>
+#include<SDL.h>
+#include<string>
+
 #include "main.h"
 #include "window.h"
 
@@ -17,12 +19,11 @@ SDL_Renderer* rendererMain;
 SDL_Rect pixelRectArray[gameArrayX * gameArrayY];
 
 pos mouse;
-
+Uint32 mouseButtons;
+const Uint8* keyboardState;
 
 
 void initSDL() {
-
-    float dpiH, dpiV, dpiD;
 
     //initilize needed SDL functions
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
@@ -32,6 +33,9 @@ void initSDL() {
     }
 
     /*
+    * 
+    * float dpiH, dpiV, dpiD;
+    * 
     if (SDL_GetDisplayDPI(0, &dpiD, &dpiH, &dpiV) != 0) {
         SDL_Log("Unable to get display dpi: %s", SDL_GetError());
     }
@@ -46,7 +50,7 @@ void initSDL() {
     */
 
     windowMain = SDL_CreateWindow(
-        "Pong v0.2-alpha",                       // window title
+        "Pong v0.3.2-alpha",                       // window title
         SDL_WINDOWPOS_UNDEFINED,           // initial x position
         SDL_WINDOWPOS_UNDEFINED,           // initial y position
         windowWidth,                               // width, in pixels
@@ -74,7 +78,15 @@ void initSDL() {
 
 void checkInputs() {
 
-    SDL_GetMouseState(&mouse.x, &mouse.y);
+    mouseButtons = SDL_GetMouseState(&mouse.x, &mouse.y);
+
+    keyboardState = SDL_GetKeyboardState(NULL);
+
+    if (keyboardState[SDL_SCANCODE_ESCAPE]) {
+        currentMenu = Screen::MainMenu;
+        gameReset();
+        scoreReset();
+    }
 
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
@@ -131,6 +143,10 @@ void gameDraw() {
     SDL_RenderClear(rendererMain);
 
     SDL_SetRenderDrawColor(rendererMain, 89, 89, 94, NULL);
+
+    textToScreen(std::to_string(player1Score), 150, 100, 16);
+    textToScreen(std::to_string(player2Score), 550, 100, 16);
+
     SDL_RenderFillRects(rendererMain, pixelRectArray, pixelRectArrayIndex);
 
     SDL_RenderPresent(rendererMain);
@@ -142,8 +158,10 @@ void gameDraw() {
 void cleanUp() {
 
     programRunning = false;
-    SDL_DestroyRenderer(rendererMain);
-    SDL_DestroyWindow(windowMain);
+    if(!spriteSheetSurface) SDL_FreeSurface(spriteSheetSurface);
+    if(!spriteSheetTexture) SDL_DestroyTexture(spriteSheetTexture);
+    if(!rendererMain) SDL_DestroyRenderer(rendererMain);
+    if(!windowMain)SDL_DestroyWindow(windowMain);
     SDL_Quit();
 
 }
