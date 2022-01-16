@@ -5,11 +5,12 @@
 
 // Global varibles 
 
+enum Screen { Game = 0, MainMenu, SettingsMenu };
+
 const int version = 20220115; // yyyymmdd time format
 
 bool programRunning = true; //false if trying to exit
-int currentMenu = 1;// 0 = no menu so go into game 1 = main menu
-
+int currentMenu = Screen::MainMenu;
 int ballDirX = 1, ballDirY = 0;
 int ballSpeed = 4;
 
@@ -69,7 +70,7 @@ void gameReset() {
 void gameLogic() {
 
     if (keyboardState[SDL_SCANCODE_ESCAPE]) {
-        currentMenu = 1;
+        currentMenu = Screen::MainMenu;
         gameReset();
     }
 
@@ -138,7 +139,7 @@ void mainMenuTick() {
         SDL_SetRenderDrawColor(rendererMain, 89, 89, 94, NULL);
         
         if (mouseButtons & SDL_BUTTON_LEFT) {
-            currentMenu = 0;
+            currentMenu = Screen::Game;
         }
         
     }
