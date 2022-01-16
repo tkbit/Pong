@@ -12,7 +12,7 @@ const int version = 20220115; // yyyymmdd time format
 bool programRunning = true; //false if trying to exit
 int currentMenu = Screen::MainMenu;
 int ballDirX = 1, ballDirY = 0;
-int ballSpeed = 4;
+int ballSpeed = 2; //change value to 3
 
 SDL_Rect pixelRect, paddle1, paddle2, ball;
 
@@ -120,7 +120,7 @@ void gameLogic() {
 
 void mainMenuTick() {
 
-    SDL_Rect startButton;
+    SDL_Rect startButton;       //does a thing
 
     startButton.w = windowWidth / 4;
     startButton.h = windowHeight / 8;
