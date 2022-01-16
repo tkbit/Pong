@@ -146,6 +146,7 @@ void gameDraw() {
 void cleanUp() {
 
     programRunning = false;
+    SDL_FreeSurface(spriteSheet);
     SDL_DestroyRenderer(rendererMain);
     SDL_DestroyWindow(windowMain);
     SDL_Quit();

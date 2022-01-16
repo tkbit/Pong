@@ -7,7 +7,9 @@
 
 enum Screen { Game = 0, MainMenu, SettingsMenu };
 
-const int version = 20220115; // yyyymmdd time format
+SDL_Surface* spriteSheet = SDL_LoadBMP("assects/spriteSheet.bmp");
+
+const int version = 2022011519; // yyyymmddhh time format
 
 bool programRunning = true; //false if trying to exit
 int currentMenu = Screen::MainMenu;
@@ -169,6 +171,14 @@ int main(int argc, char* argv[]) {
     int targetFPSDelay = (int)((1 / targetFPS) * 1000);
 
     initSDL();
+
+
+    if (!spriteSheet) {
+        SDL_Log("Faild to load spriteSheet.bmp: %s", SDL_GetError());
+        statusCode = 2;
+    }
+
+
     gameReset();
 
     while (programRunning) {
