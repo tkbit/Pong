@@ -10,7 +10,7 @@ enum Screen { Game = 0, MainMenu, SettingsMenu };
 SDL_Surface* spriteSheetSurface;
 SDL_Texture* spriteSheetTexture;
 
-const int version = 2022011519; // yyyymmddhh time format
+const int version = 2022011521; // yyyymmddhh 24 hour time format
 
 bool programRunning = true; //false if trying to exit
 int currentMenu = Screen::MainMenu;
