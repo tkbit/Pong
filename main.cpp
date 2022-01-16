@@ -27,7 +27,6 @@ void updatePaddles() {
 
     //move paddles y to the mouse cursor
     paddle1.y = mouse.y / pixelSizeY - paddle1.h / 2;
-    //paddle2.y = mouse.y / pixelSizeY - paddle2.h / 2;
     paddle2.y = ball.y + ball.h / 2 - paddle2.h / 2;
 
     //keep paddles within the window
@@ -213,10 +212,8 @@ void mainMenuTick() {
     SDL_RenderFillRect(rendererMain, &settingsButton);
     */
 
-    //textToScreen("THE QUICK BROWN FOX JUMPED OVER THE",0,0);
-    //textToScreen("LAZY DOG", 0, 8 * pixelSizeY);
     textToScreen("PONG", 200, 200, 32, 0);
-    textToScreen("START", startButton.x + 10, startButton.y + 6);
+    textToScreen("Start", startButton.x + 10, startButton.y + 6);
     //textToScreen("SETINGS", settingsButton.x + 5, settingsButton.y + 5);
 
     SDL_RenderPresent(rendererMain);
@@ -265,8 +262,6 @@ int main(int argc, char* argv[]) {
     while (programRunning) {
 
         checkInputs();
-
-        //if (currentMenu == 1) mainMenuTick(); else gameTick();
 
         switch (currentMenu){
         case Game:
