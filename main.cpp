@@ -7,7 +7,8 @@
 
 enum Screen { Game = 0, MainMenu, SettingsMenu };
 
-SDL_Surface* spriteSheet = SDL_LoadBMP("assects/spriteSheet.bmp");
+SDL_Surface* spriteSheetSurface;
+SDL_Texture* spriteSheetTexture;
 
 const int version = 2022011519; // yyyymmddhh time format
 
@@ -16,7 +17,7 @@ int currentMenu = Screen::MainMenu;
 int ballDirX = 1, ballDirY = 0;
 int ballSpeed = 4;
 
-SDL_Rect pixelRect, paddle1, paddle2, ball;
+SDL_Rect pixelRect, paddle1, paddle2, ball, spriteSheetSprite, sprite;
 
 int player1Score = 0, player2Score = 0;
 
@@ -39,6 +40,17 @@ void updatePaddles() {
 }
 
 void gameReset() {
+
+    // sprite in the sprite sheet
+    sprite.x = 100;
+    sprite.y = 100;
+    sprite.w = 8 * pixelSizeX;
+    sprite.h = 8 * pixelSizeY;
+
+    spriteSheetSprite.x = 0;
+    spriteSheetSprite.y = 0;
+    spriteSheetSprite.w = 8;
+    spriteSheetSprite.h = 8;
 
     //game pixels
     pixelRect.x = 0;
@@ -122,10 +134,10 @@ void gameLogic() {
 
 void mainMenuTick() {
 
-    SDL_Rect startButton;       //does a thing
+    SDL_Rect startButton;
 
-    startButton.w = windowWidth / 4;
-    startButton.h = windowHeight / 8;
+    startButton.w = 140;
+    startButton.h = 34;
     startButton.x = (windowWidth / 2) - startButton.w / 2;
     startButton.y = windowHeight / 2;
 
@@ -152,6 +164,27 @@ void mainMenuTick() {
     
     SDL_RenderFillRect(rendererMain, &startButton);
 
+    // swith to sprite A
+    spriteSheetSprite.y = 8;
+    
+    sprite.x = startButton.x + 10;
+    sprite.y = startButton.y + 5;
+
+    spriteSheetSprite.x = 8 * (83 - 64);
+    SDL_RenderCopy(rendererMain, spriteSheetTexture, &spriteSheetSprite, &sprite);
+    spriteSheetSprite.x = 8 * (84 - 64);
+    sprite.x = sprite.x + spriteSheetSprite.w * pixelSizeX;
+    SDL_RenderCopy(rendererMain, spriteSheetTexture, &spriteSheetSprite, &sprite);
+    spriteSheetSprite.x = 8;
+    sprite.x = sprite.x + spriteSheetSprite.w * pixelSizeX;
+    SDL_RenderCopy(rendererMain, spriteSheetTexture, &spriteSheetSprite, &sprite);
+    spriteSheetSprite.x = 8 * (82 - 64);
+    sprite.x = sprite.x + spriteSheetSprite.w * pixelSizeX;
+    SDL_RenderCopy(rendererMain, spriteSheetTexture, &spriteSheetSprite, &sprite);
+    spriteSheetSprite.x = 8 * (84 - 64);
+    sprite.x = sprite.x + spriteSheetSprite.w * pixelSizeX;
+    SDL_RenderCopy(rendererMain, spriteSheetTexture, &spriteSheetSprite, &sprite);
+
     SDL_RenderPresent(rendererMain);
 
 }
@@ -172,15 +205,23 @@ int main(int argc, char* argv[]) {
 
     initSDL();
 
-
-    if (!spriteSheet) {
+    spriteSheetSurface = SDL_LoadBMP("assects/spriteSheet.bmp"); // load sprite sheet to ram
+    if (!spriteSheetSurface) {
         SDL_Log("Faild to load spriteSheet.bmp: %s", SDL_GetError());
         statusCode = 2;
     }
 
+    spriteSheetTexture = SDL_CreateTextureFromSurface(rendererMain, spriteSheetSurface); // move sprite sheet from ram to vram
+    if (!spriteSheetTexture) {
+        SDL_Log("Faild to create texture: %s", SDL_GetError());
+        statusCode = 2;
+    }
+
+    SDL_FreeSurface(spriteSheetSurface); // free ram of sprite sheet
 
     gameReset();
 
+    if (statusCode != 0) programRunning = false;
     while (programRunning) {
 
         checkInputs();
