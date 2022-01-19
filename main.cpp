@@ -132,10 +132,10 @@ void gameLogic() {
 
 }
 
-void textToScreen(std::string text, int textX, int textY, int size, int spacing) {
+void textToScreen(std::string text, int textPosX, int textPosY, int size, int spacing) {
 
-    sprite.x = textX;
-    sprite.y = textY;
+    sprite.x = textPosX;
+    sprite.y = textPosY;
     sprite.w = size * pixelSizeX;
     sprite.h = size * pixelSizeY;
 
