@@ -50,7 +50,7 @@ void initSDL() {
     */
 
     windowMain = SDL_CreateWindow(
-        "Pong v0.3.2-alpha",                       // window title
+        "Pong v0.3.2-dev",                       // window title
         SDL_WINDOWPOS_UNDEFINED,           // initial x position
         SDL_WINDOWPOS_UNDEFINED,           // initial y position
         windowWidth,                               // width, in pixels

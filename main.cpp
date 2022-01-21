@@ -1,5 +1,8 @@
 #include<iostream>
+#include<string>
+
 #include <SDL.h>
+
 #include "window.h"
 #include "main.h"
 
@@ -10,12 +13,12 @@
 SDL_Surface* spriteSheetSurface;
 SDL_Texture* spriteSheetTexture;
 
-const int version = 2022011614; // yyyymmddhh 24 hour time format
+const int version = 2022011823; // yyyymmddhh 24 hour time format
 
 bool programRunning = true; //false if trying to exit
 int currentMenu = Screen::MainMenu;
-int ballDirX = 1, ballDirY = 0;
-int ballSpeed = 4;
+float ballDirX = 1, ballDirY = 0;
+float ballSpeed = 4;
 
 SDL_Rect pixelRect, paddle1, paddle2, ball, spriteSheetSprite, sprite;
 
@@ -25,9 +28,16 @@ int player1Score = 0, player2Score = 0;
 
 void updatePaddles() {
 
-    //move paddles y to the mouse cursor
+    //move paddle1 y to the mouse cursor
     paddle1.y = mouse.y / pixelSizeY - paddle1.h / 2;
-    paddle2.y = ball.y + ball.h / 2 - paddle2.h / 2;
+    //paddle2.y = ball.y + ball.h / 2 - paddle2.h / 2;
+
+    if (paddle2.y > ball.y + ball.h / 2 - paddle2.h / 2) {
+        paddle2.y -= (player1Score - player2Score) + 1;
+    }
+    if(paddle2.y < ball.y + ball.h / 2 - paddle2.h / 2) {
+        paddle2.y += (player1Score - player2Score) + 1;
+    }
 
     //keep paddles within the window
     if (paddle1.y > gameArrayY - paddle1.h) paddle1.y = gameArrayY - paddle1.h;
@@ -69,7 +79,7 @@ void gameReset() {
     paddle1.x = paddle1.w;
 
     //right paddle
-    paddle2.y = 0;
+    //paddle2.y = 0;
     paddle2.w = 8;
     paddle2.h = 64;
     paddle2.x = gameArrayX - 2 * paddle2.w;
@@ -79,6 +89,9 @@ void gameReset() {
     ball.y = gameArrayY / 2;
     ball.w = 8;
     ball.h = 8;
+
+    ballDirX = 1;
+    ballDirY = 0;
 
     updatePaddles();
 
@@ -103,7 +116,7 @@ void gameLogic() {
         && ballDirX < 0
         ) {
         ballDirX = ballDirX * -1;
-        ballDirY = (int)(std::sin(std::rand() + mouse.y) * 6);
+        ballDirY = (float)std::sin(std::rand() + mouse.y);
     }
 
     // if ball hits top or bottom of screen then bounce
@@ -115,9 +128,11 @@ void gameLogic() {
         ) ballDirY = ballDirY * -1;
 
 
+    ballSpeed = (float)(player1Score - player2Score) + 1.0f; // changing ball speed seems to have broken hit dection
+
     // move ball
-    ball.x = ball.x + ballDirX * ballSpeed;
-    ball.y = ball.y + ballDirY;
+    ball.x += (int)(ballDirX * ballSpeed);
+    ball.y += (int)(ballDirY * ballSpeed);
 
 
     // reset if ball hits left or right edge of screen
@@ -212,6 +227,7 @@ void mainMenuTick() {
     SDL_RenderFillRect(rendererMain, &settingsButton);
     */
 
+    textToScreen(std::to_string(version), 0, windowHeight - 8 * pixelSizeY);
     textToScreen("PONG", 200, 200, 32, 0);
     textToScreen("Start", startButton.x + 10, startButton.y + 6);
     //textToScreen("SETINGS", settingsButton.x + 5, settingsButton.y + 5);
