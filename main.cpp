@@ -270,9 +270,13 @@ void gameTick() {
 }
 
 void settingsMenuTick() {
+    SDL_SetRenderDrawColor(rendererMain, 69, 69,69 , NULL);
+    SDL_RenderClear(rendererMain);
 
+    textToScreen("SETTINGS",150, 200, 20 );
+    textToScreen("ESC FOR MAINMENU", 260, 265, 6);
 
-
+    SDL_RenderPresent(rendererMain);
 }
 
 // main function game start
