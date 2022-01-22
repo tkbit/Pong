@@ -169,6 +169,13 @@ void textToScreen(std::string text, int textPosX, int textPosY, int size, int sp
     }
 
 }
+bool mouseselect(SDL_Rect detectButton) {
+    return (mouse.x >= detectButton.x
+        && mouse.x <= detectButton.x + detectButton.w
+        && mouse.y >= detectButton.y
+        && mouse.y < detectButton.y + detectButton.h
+        );
+}
 
 void mainMenuTick() {
 
@@ -192,11 +199,7 @@ void mainMenuTick() {
     SDL_SetRenderDrawColor(rendererMain, 21, 21, 23, NULL);
     SDL_RenderClear(rendererMain);
 
-    if (mouse.x >= startButton.x
-        && mouse.x <= startButton.x + startButton.w
-        && mouse.y >= startButton.y
-        && mouse.y < startButton.y + startButton.h
-        ) {
+    if (mouseselect(startButton)) {
 
         SDL_SetRenderDrawColor(rendererMain, 89, 89, 94, NULL);
         
