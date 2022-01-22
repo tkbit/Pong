@@ -103,30 +103,16 @@ void gameLogic() {
     updatePaddles();
 
     // if ball hits a paddle then bounce
-    if (
-        ball.x + ball.w >= paddle2.x
-        && ball.y  < paddle2.y + paddle2.h
-        && ball.y  > paddle2.y
-        && ball.x + ball.w < gameArrayX
-        && ballDirX > 0
-        || ball.x <= paddle1.w + paddle1.x
-        && ball.y  < paddle1.y + paddle1.h
-        && ball.y  > paddle1.y
-        && ball.x  > 0
-        && ballDirX < 0
-        ) {
+    if (SDL_HasIntersection(&ball, &paddle1) || SDL_HasIntersection(&ball, &paddle2)) {
         ballDirX = ballDirX * -1;
         ballDirY = (float)std::sin(std::rand() + mouse.y) * 2;
     }
 
     // if ball hits top or bottom of screen then bounce
-    if (
-        ball.y > gameArrayY - ball.h
-        && ballDirY > 0
-        || ball.y < 0
-        && ballDirY < 0
+    int zero = 0, WW = gameArrayX, WH = gameArrayY;
+    if (SDL_IntersectRectAndLine(&ball, &zero, &zero, &WW, &zero)
+        || SDL_IntersectRectAndLine(&ball, &zero, &WH, &WW, &WH)
         ) ballDirY = ballDirY * -1;
-
 
     //ballSpeed = (float)(player1Score - player2Score) + 1.0f; // changing ball speed seems to have broken hit dection
 
@@ -169,13 +155,6 @@ void textToScreen(std::string text, int textPosX, int textPosY, int size, int sp
     }
 
 }
-bool mouseselect(SDL_Rect detectButton) {
-    return (mouse.x >= detectButton.x
-        && mouse.x <= detectButton.x + detectButton.w
-        && mouse.y >= detectButton.y
-        && mouse.y < detectButton.y + detectButton.h
-        );
-}
 
 void mainMenuTick() {
 
@@ -199,53 +178,36 @@ void mainMenuTick() {
     SDL_SetRenderDrawColor(rendererMain, 21, 21, 23, NULL);
     SDL_RenderClear(rendererMain);
 
-    if (mouseselect(startButton)) {
-
+    //start button
+    if (SDL_PointInRect(&mouse, &startButton)) {
         SDL_SetRenderDrawColor(rendererMain, 89, 89, 94, NULL);
-        
         if (mouseButtons & SDL_BUTTON_LEFT) {
             currentMenu = Screen::Game;
         }
-        
     }
     else {
         SDL_SetRenderDrawColor(rendererMain, 49, 125, 44, NULL);
     }
-
     SDL_RenderFillRect(rendererMain, &startButton);
 
     //setting button
-    if (mouse.x >= settingsButton.x
-        && mouse.x <= settingsButton.x + settingsButton.w
-        && mouse.y >= settingsButton.y
-        && mouse.y < settingsButton.y + settingsButton.h
-        ) {
-
+    if (SDL_PointInRect(&mouse, &settingsButton)) {
         SDL_SetRenderDrawColor(rendererMain, 89, 89, 94, NULL);
-
         if (mouseButtons & SDL_BUTTON_LEFT) {
             currentMenu = Screen::SettingsMenu;
         }
-
     }
     else {
         SDL_SetRenderDrawColor(rendererMain, 49, 49, 125, NULL);
     }
-
     SDL_RenderFillRect(rendererMain, &settingsButton);
+
     // exit button
-    if (mouse.x >= exitButton.x
-        && mouse.x <= exitButton.x + exitButton.w
-        && mouse.y >= exitButton.y
-        && mouse.y < exitButton.y + exitButton.h
-        ) {
-
+    if (SDL_PointInRect(&mouse, &exitButton)) {
         SDL_SetRenderDrawColor(rendererMain, 89, 89, 94, NULL);
-
         if (mouseButtons & SDL_BUTTON_LEFT) {
             cleanUp();
         }
-
     }
     else {
         SDL_SetRenderDrawColor(rendererMain, 125, 49, 44, NULL);

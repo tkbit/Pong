@@ -1,9 +1,5 @@
 #pragma once
 
-struct pos {
-    int x, y;
-};
-
 extern int windowSizeIn, pixelSizeX, pixelSizeY, statusCode, windowWidth, windowHeight;
 extern float targetFPS;
 
@@ -14,7 +10,7 @@ extern SDL_Window* windowMain;
 extern Uint32 windowMainID, mouseButtons;
 extern SDL_Rect pixelRectArray[];
 
-extern pos mouse;
+extern SDL_Point mouse;
 extern const Uint8* keyboardState;
 
 void cleanUp();

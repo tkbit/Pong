@@ -18,7 +18,7 @@ Uint32 windowMainID = NULL;
 SDL_Renderer* rendererMain;
 SDL_Rect pixelRectArray[gameArrayX * gameArrayY];
 
-pos mouse;
+SDL_Point mouse;
 Uint32 mouseButtons;
 const Uint8* keyboardState;
 
