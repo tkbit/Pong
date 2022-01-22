@@ -13,7 +13,7 @@
 SDL_Surface* spriteSheetSurface;
 SDL_Texture* spriteSheetTexture;
 
-const int version = 2022012020; // yyyymmddhh 24 hour time format
+const int version = 2022012120; // yyyymmddhh 24 hour time format
 
 bool programRunning = true; //false if trying to exit
 int currentMenu = Screen::MainMenu;
