@@ -13,7 +13,7 @@
 SDL_Surface* spriteSheetSurface;
 SDL_Texture* spriteSheetTexture;
 
-const int version = 2022011823; // yyyymmddhh 24 hour time format
+const int version = 2022012020; // yyyymmddhh 24 hour time format
 
 bool programRunning = true; //false if trying to exit
 int currentMenu = Screen::MainMenu;
@@ -116,7 +116,7 @@ void gameLogic() {
         && ballDirX < 0
         ) {
         ballDirX = ballDirX * -1;
-        ballDirY = (float)std::sin(std::rand() + mouse.y);
+        ballDirY = (float)std::sin(std::rand() + mouse.y) * 2;
     }
 
     // if ball hits top or bottom of screen then bounce
@@ -128,7 +128,7 @@ void gameLogic() {
         ) ballDirY = ballDirY * -1;
 
 
-    ballSpeed = (float)(player1Score - player2Score) + 1.0f; // changing ball speed seems to have broken hit dection
+    //ballSpeed = (float)(player1Score - player2Score) + 1.0f; // changing ball speed seems to have broken hit dection
 
     // move ball
     ball.x += (int)(ballDirX * ballSpeed);
