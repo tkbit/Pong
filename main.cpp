@@ -172,7 +172,7 @@ void textToScreen(std::string text, int textPosX, int textPosY, int size, int sp
 
 void mainMenuTick() {
 
-    SDL_Rect startButton, settingsButton;
+    SDL_Rect startButton, settingsButton, exitButton;
 
     startButton.w = 130;
     startButton.h = 40;
@@ -183,6 +183,11 @@ void mainMenuTick() {
     settingsButton.h = 34;
     settingsButton.x = startButton.x;
     settingsButton.y = startButton.y + startButton.h * 2;
+
+    exitButton.w = 110;
+    exitButton.h = 34;
+    exitButton.x = startButton.x;
+    exitButton.y = settingsButton.y + settingsButton.h * 2;
 
     SDL_SetRenderDrawColor(rendererMain, 21, 21, 23, NULL);
     SDL_RenderClear(rendererMain);
@@ -201,12 +206,12 @@ void mainMenuTick() {
         
     }
     else {
-        SDL_SetRenderDrawColor(rendererMain, 49, 49, 44, NULL);
+        SDL_SetRenderDrawColor(rendererMain, 49, 125, 44, NULL);
     }
 
     SDL_RenderFillRect(rendererMain, &startButton);
 
-    /*
+    //setting button
     if (mouse.x >= settingsButton.x
         && mouse.x <= settingsButton.x + settingsButton.w
         && mouse.y >= settingsButton.y
@@ -221,20 +226,40 @@ void mainMenuTick() {
 
     }
     else {
-        SDL_SetRenderDrawColor(rendererMain, 49, 49, 44, NULL);
+        SDL_SetRenderDrawColor(rendererMain, 49, 49, 125, NULL);
     }
 
     SDL_RenderFillRect(rendererMain, &settingsButton);
-    */
+    // exit button
+    if (mouse.x >= exitButton.x
+        && mouse.x <= exitButton.x + exitButton.w
+        && mouse.y >= exitButton.y
+        && mouse.y < exitButton.y + exitButton.h
+        ) {
 
+        SDL_SetRenderDrawColor(rendererMain, 89, 89, 94, NULL);
+
+        if (mouseButtons & SDL_BUTTON_LEFT) {
+            cleanUp();
+        }
+
+    }
+    else {
+        SDL_SetRenderDrawColor(rendererMain, 125, 49, 44, NULL);
+    }
+
+    SDL_RenderFillRect(rendererMain, &exitButton);
+    //========================================================================
     textToScreen(std::to_string(version), 0, windowHeight - 8 * pixelSizeY);
     textToScreen("PONG", 200, 200, 32, 0);
     textToScreen("Start", startButton.x + 10, startButton.y + 6);
-    //textToScreen("SETINGS", settingsButton.x + 5, settingsButton.y + 5);
-
+    textToScreen("SETINGS", settingsButton.x + 5, settingsButton.y + 5);
+    textToScreen("EXIT", exitButton.x + 5, exitButton.y + 5);
     SDL_RenderPresent(rendererMain);
 
 }
+
+
 
 void gameTick() {
 
