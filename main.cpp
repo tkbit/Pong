@@ -13,12 +13,12 @@
 SDL_Surface* spriteSheetSurface;
 SDL_Texture* spriteSheetTexture;
 
-const int version = 2022012120; // yyyymmddhh 24 hour time format
+const int version = 2022012121; // yyyymmddhh 24 hour time format
 
 bool programRunning = true; //false if trying to exit
 int currentMenu = Screen::MainMenu;
 float ballDirX = 1, ballDirY = 0;
-float ballSpeed = 4;
+int ballSpeed = pixelSizeX;
 
 SDL_Rect pixelRect, paddle1, paddle2, ball, spriteSheetSprite, sprite;
 
@@ -29,14 +29,21 @@ int player1Score = 0, player2Score = 0;
 void updatePaddles() {
 
     //move paddle1 y to the mouse cursor
-    paddle1.y = mouse.y / pixelSizeY - paddle1.h / 2;
+    //paddle1.y = mouse.y / pixelSizeY - paddle1.h / 2;
     //paddle2.y = ball.y + ball.h / 2 - paddle2.h / 2;
 
+    if (paddle1.y > mouse.y / pixelSizeY - paddle1.h / 2) {
+        paddle1.y -= pixelSizeY;
+    }
+    if (paddle1.y < mouse.y / pixelSizeY - paddle1.h / 2) {
+        paddle1.y += pixelSizeY;
+    }
+
     if (paddle2.y > ball.y + ball.h / 2 - paddle2.h / 2) {
-        paddle2.y -= (player1Score - player2Score) + 1;
+        paddle2.y -= pixelSizeY;
     }
     if(paddle2.y < ball.y + ball.h / 2 - paddle2.h / 2) {
-        paddle2.y += (player1Score - player2Score) + 1;
+        paddle2.y += pixelSizeY;
     }
 
     //keep paddles within the window
@@ -73,7 +80,7 @@ void gameReset() {
     pixelRect.h = pixelSizeY;
 
     //left paddle
-    paddle1.y = 0;
+    //paddle1.y = 0;
     paddle1.w = 8;
     paddle1.h = 64;
     paddle1.x = paddle1.w;
@@ -128,7 +135,6 @@ void gameLogic() {
     }else if (ball.x > gameArrayX) {
         gameReset();
         player1Score++;
-        std::cout << player1Score << '\n';
     }
 
 }
@@ -212,14 +218,13 @@ void mainMenuTick() {
     else {
         SDL_SetRenderDrawColor(rendererMain, 125, 49, 44, NULL);
     }
-
     SDL_RenderFillRect(rendererMain, &exitButton);
-    //========================================================================
+
     textToScreen(std::to_string(version), 0, windowHeight - 8 * pixelSizeY);
     textToScreen("PONG", 200, 200, 32, 0);
     textToScreen("Start", startButton.x + 10, startButton.y + 6);
-    textToScreen("SETINGS", settingsButton.x + 5, settingsButton.y + 5);
-    textToScreen("EXIT", exitButton.x + 5, exitButton.y + 5);
+    textToScreen("Settings", settingsButton.x + 5, settingsButton.y + 5);
+    textToScreen("Exit", exitButton.x + 5, exitButton.y + 5);
     SDL_RenderPresent(rendererMain);
 
 }
