@@ -113,6 +113,9 @@ void gameLogic() {
     if (SDL_HasIntersection(&ball, &paddle1) || SDL_HasIntersection(&ball, &paddle2)) {
         ballDirX = ballDirX * -1;
         ballDirY = (float)std::sin(std::rand() + mouse.y) * 2;
+        while (SDL_HasIntersection(&ball, &paddle1) || SDL_HasIntersection(&ball, &paddle2)) {
+            ball.x += (int)ballDirX;
+        }
     }
 
     // if ball hits top or bottom of screen then bounce
